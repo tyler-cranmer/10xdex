@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg16
+    container_name: farming_timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+
+volumes:
+  timescaledb_data:
+    driver: local
