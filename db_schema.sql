@@ -51,6 +51,15 @@ CREATE TABLE pool_contract (
     FOREIGN KEY (pool_id) REFERENCES pool(pool_id)
 );
 
+CREATE TABLE copied_txn (
+    id SERIAL PRIMARY KEY NOT NULL,
+    chain_id INT NOT NULL,
+    hash TEXT NOT NULL,
+    private_key TEXT NOT NULL,
+    time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
+);
+
 -- HYPER TABLES --
 
 CREATE TABLE wallet_token_balance (
