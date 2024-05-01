@@ -3,7 +3,8 @@ CREATE TABLE chain (
     chain_id INT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     native_token TEXT NOT NULL,
-    wrapped_token_address TEXT NOT NULL, 
+    wrapped_token_address TEXT NOT NULL,
+    dbank_id TEXT NOT NULL, 
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,7 +17,8 @@ CREATE TABLE token (
     decimals INT NOT NULL,
     usd_value DOUBLE PRECISION NOT NULL,
     usd_check TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
+    FOREIGN KEY (chain_id) REFERENCES chain(chain_id),
+    UNIQUE (chain_id, address, name, symbol)
 );
 
 CREATE TABLE wallet (
