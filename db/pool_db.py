@@ -21,7 +21,7 @@ class PoolDB:
     def _insert_pool(self, pool: PoolBase):
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO pool (dbank_id, protocol_dbank_id, name, controller) VALUES (%s, %s, %s) RETURNING id",
+                "INSERT INTO pool (dbank_id, protocol_dbank_id, name, controller) VALUES (%s, %s, %s) RETURNING id, created_at",
                 (
                     pool.dbank_id,
                     pool.protocol_dbank_id,
@@ -29,28 +29,28 @@ class PoolDB:
                     pool.controller
                 ),
             )
-            pool_id = cur.fetchone()[0]
+            pool_id, timestamp = cur.fetchone()[0]
             conn.commit()
-            return Pool(id=pool_id, **pool.model_dump())
+            return Pool(id=pool_id, created_at= timestamp, **pool.model_dump())
         
     def _insert_pool_contract(self, pool_contract: PoolContractBase):
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO pool_contract (pool_dbank_id, address) VALUES (%s, %s) RETURNING id",
+                "INSERT INTO pool_contract (pool_dbank_id, address) VALUES (%s, %s) RETURNING id, created_at",
                 (
                     pool_contract.pool_dbank_id,
                     pool_contract.address,
                 ),
             )
-            pool_contract_id = cur.fetchone()[0]
+            pool_contract_id, timestamp = cur.fetchone()
             conn.commit()
-            return PoolContract(id=pool_contract_id, **pool_contract.model_dump())
+            return PoolContract(id=pool_contract_id, created_at=timestamp, **pool_contract.model_dump())
         
 
     def insert_pool_stats(self, pool_stats: PoolStatsBase):
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO pool_stats (pool_dbank_id, deposited_usd_value, deposit_user_count, deposit_valuable_user_count) VALUES (%s, %s, %s, %s) RETURNING id",
+                "INSERT INTO pool_stats (pool_dbank_id, deposited_usd_value, deposit_user_count, deposit_valuable_user_count) VALUES (%s, %s, %s, %s) RETURNING id, time",
                 (
                     pool_stats.pool_dbank_id,
                     pool_stats.deposited_usd_value,
@@ -58,9 +58,9 @@ class PoolDB:
                     pool_stats.deposit_valuable_user_count,
                 ),
             )
-            pool_stats_id = cur.fetchone()[0]
+            pool_stats_id, timestamp = cur.fetchone()
             conn.commit()
-            return PoolStats(id=pool_stats_id, **pool_stats.model_dump())
+            return PoolStats(id=pool_stats_id, time=timestamp, **pool_stats.model_dump())
 
 
     def insert_pool_with_contracts(self, pool: PoolBase, contracts: list[PoolContractBase]):

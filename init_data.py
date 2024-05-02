@@ -9,7 +9,8 @@ import requests
 from db import ChainDB, TokenDB
 from config import Settings
 from db.protocol_db import ProtocolDB
-from schema import ChainBase, ProtocolBase, TokenBase
+from db.wallet_db import WalletDB
+from schema import ChainBase, ProtocolBase, TokenBase, WalletBase
 from datetime import datetime, timezone
 
 s = Settings()
@@ -111,10 +112,18 @@ def insert_pools():
 
 
 def main():
-    insert_chains()
-    insert_chain_wrapped_tokens()
-    insert_protocols()
+    # insert_chains()
+    # insert_chain_wrapped_tokens()
+    # insert_protocols()
     # insert_pools()
+    wallet_db = WalletDB()
+    base = WalletBase(
+        address="0x1234567890",
+        chain_id=1,
+    )
+    wallet = wallet_db.insert(base)
+    print(wallet)
+
     pass
 
 

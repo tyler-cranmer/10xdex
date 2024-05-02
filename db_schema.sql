@@ -27,7 +27,8 @@ CREATE TABLE wallet (
     chain_id INT NOT NULL,
     address TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
+    FOREIGN KEY (chain_id) REFERENCES chain(chain_id),
+    UNIQUE (chain_id, address)
 );
 
 CREATE TABLE protocol (
