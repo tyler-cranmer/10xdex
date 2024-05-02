@@ -19,6 +19,11 @@ class PoolDB:
 
 
     def _insert_pool(self, pool: PoolBase):
+        '''
+        Insert a new pool into the database
+
+        internal function
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO pool (dbank_id, protocol_dbank_id, name, controller) VALUES (%s, %s, %s) RETURNING id, created_at",
@@ -34,6 +39,11 @@ class PoolDB:
             return Pool(id=pool_id, created_at= timestamp, **pool.model_dump())
         
     def _insert_pool_contract(self, pool_contract: PoolContractBase):
+        '''
+        Insert a new pool contract into the database
+
+        internal function
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO pool_contract (pool_dbank_id, address) VALUES (%s, %s) RETURNING id, created_at",
@@ -48,6 +58,9 @@ class PoolDB:
         
 
     def insert_pool_stats(self, pool_stats: PoolStatsBase):
+        '''
+        Insert a new pool stats into the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO pool_stats (pool_dbank_id, deposited_usd_value, deposit_user_count, deposit_valuable_user_count) VALUES (%s, %s, %s, %s) RETURNING id, time",
@@ -64,6 +77,9 @@ class PoolDB:
 
 
     def insert_pool_with_contracts(self, pool: PoolBase, contracts: list[PoolContractBase]):
+        '''
+        Combined insert for pool and contracts
+        '''
         pool = self._insert_pool(pool)
         pool_with_contract = PoolWithContracts(pool=pool, contracts=[])
         for contract in contracts:
@@ -71,16 +87,19 @@ class PoolDB:
             pool_with_contract.contracts.append(c)
         return pool_with_contract
 
-    def get_pool(self, pool_id: str):
+    def get_pool(self, dbank_id: str):
+        '''
+        retrieves the pool object using p
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 """
                 SELECT p.*, pc.*
                 FROM pool p
-                LEFT JOIN pool_contract pc ON p.id = pc.pool_id
-                WHERE p.pool_id = %s
+                LEFT JOIN pool_contract pc ON p.id = pc.protocol_dbank_id
+                WHERE p.dbank_id = %s
                 """,
-                (pool_id,)
+                (dbank_id)
             )
             rows = cur.fetchall()
             if rows:

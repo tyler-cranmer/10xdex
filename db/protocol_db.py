@@ -20,6 +20,9 @@ class ProtocolDB:
         )
     
     def insert(self, protocol: ProtocolBase):
+        '''
+        Insert a new protocol into the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO protocol (chain_id, name, tvl, tvl_check, site_url, dbank_id) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
@@ -37,6 +40,9 @@ class ProtocolDB:
             return Protocol(id=protocol_id, **protocol.model_dump())
         
     def get_all_protocols(self):
+        '''
+        Retrieves all protocols from the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "SELECT id, chain_id, name, tvl, tvl_check, site_url, dbank_url, created_at FROM protocol"

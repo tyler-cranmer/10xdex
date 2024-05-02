@@ -19,6 +19,9 @@ class ChainDB:
         )
 
     def insert(self, chain: ChainBase):
+        '''
+        Insert a new chain into the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO chain (chain_id, name, native_token, wrapped_token_address, dbank_id) VALUES (%s, %s, %s, %s, %s) RETURNING id, created_at",
@@ -35,6 +38,9 @@ class ChainDB:
             return Chain(id=chain_id, created_at=timestamp, **chain.model_dump())
 
     def get_chain_dbank_id(self, dbank_id):
+        '''
+        Retrieves a chain object from the database using the dbank_id
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute("SELECT * FROM chain WHERE dbank_id = %s", (dbank_id,))
             row = cur.fetchone()
@@ -51,6 +57,9 @@ class ChainDB:
             )
 
     def get_all_chains(self):
+        '''
+        Retrieves all chains from the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "SELECT id, chain_id, name, native_token, wrapped_token_address, dbank_id, created_at FROM chain ORDER BY name ASC"

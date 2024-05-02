@@ -18,6 +18,9 @@ class TokenDB:
         )
 
     def insert(self, token: TokenBase):
+        '''
+        Insert a new token into the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO token (address, name, symbol, decimals, chain_id, usd_value, usd_check) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id, created_at",
@@ -36,6 +39,9 @@ class TokenDB:
             return Token(id=token_id, created_at=timestamp, **token.model_dump())
 
     def get_all_tokens(self):
+        '''
+        Gets all tokens from the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "SELECT id, address, name, chain_id, symbol, decimals, usd_value, usd_check, created_at FROM token"

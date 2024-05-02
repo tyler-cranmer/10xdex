@@ -19,6 +19,9 @@ class TokenDB:
 
 
     def insert(self, transaction: TransactionBase):
+        '''
+        inserts a new transaction into the database
+        '''
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO transaction (hash, chain_id, block_number, from_address, to_address, token_address, value) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
