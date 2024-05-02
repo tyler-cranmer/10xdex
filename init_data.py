@@ -3,13 +3,13 @@ This script fetches the initial data to populate the database.
 
 It fetches the chains, tokens, protocols, and pools from the Debank API and inserts them into the database.
 
-
 """
 
 import requests
 from db import ChainDB, TokenDB
 from config import Settings
-from schema import ChainBase, TokenBase
+from db.protocol_db import ProtocolDB
+from schema import ChainBase, ProtocolBase, TokenBase
 from datetime import datetime, timezone
 
 s = Settings()
@@ -33,7 +33,7 @@ def insert_chains():
 
     for _, chain in enumerate(chains):
         wt = chain["wrapped_token_id"]
-        if wt is None:
+        if wt is None or wt == "":
             wt = "none"
         x = chain_db.insert(
             ChainBase(
@@ -45,6 +45,7 @@ def insert_chains():
             )
         )
         chain_names.append(x.name)
+
     print(f"Inserted chains: {chain_names}")
 
 
@@ -56,7 +57,7 @@ def insert_chain_wrapped_tokens():
     for chain in chains:
         token = chain.wrapped_token_address
         db_id = chain.dbank_id
-        if token == "" or token is None:
+        if token == "none" or token is None:
             continue
         url = f"https://pro-openapi.debank.com/v1/token?chain_id={db_id}&id={token}"
         token_info = fetch_dbbank(url)
@@ -77,18 +78,44 @@ def insert_chain_wrapped_tokens():
     print(f"Inserted tokens: {token_list}")
 
 
-def fetch_insert_protocols():
-    pass
+def insert_protocols():
+    chain_db = ChainDB()
+    protocol_db = ProtocolDB()
+    chains = chain_db.get_all_chains()
+
+    for chain in chains:
+        url = (
+            f"https://pro-openapi.debank.com/v1/protocol/list?chain_id={chain.dbank_id}"
+        )
+        protocol_data = fetch_dbbank(url)
+        protocol_list = []
+        for p in protocol_data:
+            protocol = protocol_db.insert(
+                ProtocolBase(
+                    chain_id=chain.chain_id,
+                    name=p["name"],
+                    tvl=p["tvl"],
+                    tvl_check=datetime.now(timezone.utc),
+                    site_url=p["site_url"],
+                    dbank_id=p["id"],
+                )
+            )
+            protocol_list.append(protocol.name)
+        print(f"Inserted protocols for {chain.name}: {protocol_list}")
 
 
-def fetch_insert_pools():
-
+def insert_pools():
+    # url = 'https://pro-openapi.debank.com/v1/pool?id=0x00000000219ab540356cbb839cbe05303d7705fa&chain_id=eth'
+    # data = fetch_dbbank(url)
     pass
 
 
 def main():
     insert_chains()
     insert_chain_wrapped_tokens()
+    insert_protocols()
+    # insert_pools()
+    pass
 
 
 if __name__ == "__main__":

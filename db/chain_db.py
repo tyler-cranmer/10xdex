@@ -21,7 +21,7 @@ class ChainDB:
     def insert(self, chain: ChainBase):
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO chain (chain_id, name, native_token, wrapped_token_address, dbank_id) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                "INSERT INTO chain (chain_id, name, native_token, wrapped_token_address, dbank_id) VALUES (%s, %s, %s, %s, %s) RETURNING id, created_at",
                 (
                     chain.chain_id,
                     chain.name,
@@ -30,14 +30,30 @@ class ChainDB:
                     chain.dbank_id,
                 ),
             )
-            chain_id = cur.fetchone()[0]
+            chain_id, timestamp = cur.fetchone()
             conn.commit()
-            return Chain(id=chain_id, **chain.model_dump())
+            return Chain(id=chain_id, created_at=timestamp, **chain.model_dump())
+
+    def get_chain_dbank_id(self, dbank_id):
+        with self._connect() as conn, conn.cursor() as cur:
+            cur.execute("SELECT * FROM chain WHERE dbank_id = %s", (dbank_id,))
+            row = cur.fetchone()
+            if row is None:
+                return None
+            return Chain(
+                id=row[0],
+                chain_id=row[1],
+                name=row[2],
+                native_token=row[3],
+                wrapped_token_address=row[4],
+                dbank_id=row[5],
+                created_at=row[6],
+            )
 
     def get_all_chains(self):
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "SELECT id, chain_id, name, native_token, wrapped_token_address, dbank_id, created_at FROM chain"
+                "SELECT id, chain_id, name, native_token, wrapped_token_address, dbank_id, created_at FROM chain ORDER BY name ASC"
             )
             rows = cur.fetchall()
             return [
