@@ -23,6 +23,7 @@ CREATE TABLE wallet (
     id SERIAL PRIMARY KEY NOT NULL,
     chain_id INT NOT NULL,
     address TEXT NOT NULL,
+    private_key TEXT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
 );
@@ -51,14 +52,6 @@ CREATE TABLE pool_contract (
     FOREIGN KEY (pool_id) REFERENCES pool(pool_id)
 );
 
-CREATE TABLE copied_txn (
-    id SERIAL PRIMARY KEY NOT NULL,
-    chain_id INT NOT NULL,
-    hash TEXT NOT NULL,
-    private_key TEXT NOT NULL,
-    time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
-);
 
 -- HYPER TABLES --
 
@@ -86,6 +79,7 @@ CREATE TABLE txn_record (
     to_address TEXT NOT NULL,
     token_address TEXT NOT NULL,
     amount DECIMAL(65, 18) NOT NULL,
+    is_copied BOOLEAN NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
 );
