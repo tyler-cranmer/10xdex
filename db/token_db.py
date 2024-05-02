@@ -1,17 +1,29 @@
+import psycopg2
+from schema import TokenBase, Token
+from config import Settings
 
-
-from contextvars import Token
-from schema import TokenBase
+s = Settings()
 
 
 class TokenDB:
-    def __init__(self, db):
-        self.db = db
+    def __init__(self):
+        self.settings = s
+
+    def _connect(self):
+        return psycopg2.connect(
+            host=self.settings.POSTGRES_HOST,
+            user=self.settings.POSTGRES_USER,
+            password=self.settings.POSTGRES_PASSWORD,
+            dbname=self.settings.POSTGRES_DB,
+        )
 
     def insert(self, token: TokenBase):
-        with self.db.cursor() as cur:
+        '''
+        Insert a new token into the database
+        '''
+        with self._connect() as conn, conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO token (address, name, symbol, decimals, chain_id, usd_value, usd_check) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                "INSERT INTO token (address, name, symbol, decimals, chain_id, usd_value, usd_check) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id, created_at",
                 (
                     token.address,
                     token.name,
@@ -22,7 +34,30 @@ class TokenDB:
                     token.usd_check,
                 ),
             )
-            token_id = cur.fetchone()[0]
-            self.db.commit()
-            token = Token(id=token_id, **token.model_dump())
-            return token
+            token_id, timestamp = cur.fetchone()
+            conn.commit()
+            return Token(id=token_id, created_at=timestamp, **token.model_dump())
+
+    def get_all_tokens(self):
+        '''
+        Gets all tokens from the database
+        '''
+        with self._connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, address, name, chain_id, symbol, decimals, usd_value, usd_check, created_at FROM token"
+            )
+            rows = cur.fetchall()
+            return [
+                Token(
+                    id=row[0],
+                    address=row[1],
+                    name=row[2],
+                    symbol=row[3],
+                    decimals=row[4],
+                    chain_id=row[5],
+                    usd_value=row[6],
+                    usd_check=row[7],
+                    created_at=row[8],
+                )
+                for row in rows
+            ]
