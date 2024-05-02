@@ -32,7 +32,7 @@ class TokenDB:
                 ),
             )
             token_id, timestamp = cur.fetchone()
-            # conn.commit()
+            conn.commit()
             return Token(id=token_id, created_at=timestamp, **token.model_dump())
 
     def get_all_tokens(self):
