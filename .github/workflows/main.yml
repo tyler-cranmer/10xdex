@@ -12,12 +12,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        ssh-key: ${{ secrets.GITHUB_ACTIONS_SSH }}
+        ssh-key: ${{ secrets.SSH_MKT_PK }}
 
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.GITHUB_ACTIONS_SSH }}" > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_MKT_PK }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
