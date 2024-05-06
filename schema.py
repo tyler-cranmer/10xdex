@@ -307,9 +307,11 @@ class WalletBase(BaseModel):
     Attributes:
         address: The address of the wallet.
         chain_id: The id of the blockchain chain the wallet belongs to.
+        private_key: The private key of the wallet. Defaults to None if not provided. private key is for copied transactions.
     """
     address: str
     chain_id: int
+    private_key: Optional[str] = None
 
 
 class Wallet(WalletBase):
@@ -369,6 +371,7 @@ class TransactionBase(BaseModel):
         to_address: The address the transaction is to.
         token_address: The address of the token being transacted.
         value: The value of the transaction.
+        is_bool: A boolean value indicating if the transaction has been copied from another source.
     """
     hash: str
     chain_id: int
@@ -377,6 +380,7 @@ class TransactionBase(BaseModel):
     to_address: str
     token_address: str
     value: Decimal
+    is_copied: bool = False
 
 
 class Transaction(TransactionBase):

@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2.errors import UniqueViolation
 from schema import ChainBase, Chain
 from config import Settings
 
@@ -22,21 +23,35 @@ class ChainDB:
         '''
         Insert a new chain into the database
         '''
-        with self._connect() as conn, conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO chain (chain_id, name, native_token, wrapped_token_address, dbank_id) VALUES (%s, %s, %s, %s, %s) RETURNING id, created_at",
-                (
-                    chain.chain_id,
-                    chain.name,
-                    chain.native_token,
-                    chain.wrapped_token_address,
-                    chain.dbank_id,
-                ),
-            )
-            chain_id, timestamp = cur.fetchone()
-            conn.commit()
-            return Chain(id=chain_id, created_at=timestamp, **chain.model_dump())
 
+        conn = None # Initialize connection to None
+
+        try:
+            with self._connect() as conn, conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO chain (chain_id, name, native_token, wrapped_token_address, dbank_id) VALUES (%s, %s, %s, %s, %s) RETURNING id, created_at",
+                    (
+                        chain.chain_id,
+                        chain.name,
+                        chain.native_token,
+                        chain.wrapped_token_address,
+                        chain.dbank_id,
+                    ),
+                )
+                chain_id, timestamp = cur.fetchone()
+                conn.commit()
+                return Chain(id=chain_id, created_at=timestamp, **chain.model_dump())
+        
+        except UniqueViolation as e:
+            if conn:
+                conn.rollback()
+            print(f"Chain already exists: {chain.name}.\nError: {e}")
+
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            print(f"An error occurred: {e}")
+            
     def get_chain_dbank_id(self, dbank_id):
         '''
         Retrieves a chain object from the database using the dbank_id

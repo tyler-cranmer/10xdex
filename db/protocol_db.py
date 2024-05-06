@@ -5,7 +5,6 @@ from config import Settings
 
 s = Settings()
 
-
 class ProtocolDB:
 
     def __init__(self):

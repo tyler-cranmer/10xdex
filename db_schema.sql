@@ -62,14 +62,14 @@ CREATE TABLE pool_contract (
     FOREIGN KEY (pool_dbank_id) REFERENCES pool(dbank_id)
 );
 
-CREATE TABLE copied_txn (
-    id SERIAL PRIMARY KEY NOT NULL,
-    chain_id INT NOT NULL,
-    hash TEXT NOT NULL,
-    private_key TEXT NOT NULL,
-    time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
-);
+-- CREATE TABLE copied_txn (
+--     id SERIAL PRIMARY KEY NOT NULL,
+--     chain_id INT NOT NULL,
+--     hash TEXT NOT NULL,
+--     private_key TEXT NOT NULL,
+--     time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
+-- );
 
 -- HYPER TABLES --
 
