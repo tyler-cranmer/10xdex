@@ -12,13 +12,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        ssh-key: ${{ secrets.SSH_MKT_PK }}
+        ssh-key: ${{ secrets.SSH_PUBLIC_KEY }}
 
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_MKT_PK }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa.pub
+        chmod 644 ~/.ssh/id_rsa.pub
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
     - name: Build and Deploy
@@ -26,7 +26,6 @@ jobs:
         ssh -vvv -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
         cd /root/farming/farming_db
         git pull origin main
-  
         # cp /root/farming/.env /root/farming/farming_db/.env
         # docker-compose down
         # docker-compose up --build -d
