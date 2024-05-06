@@ -23,10 +23,7 @@ jobs:
         run: |
           echo "Starting deployment..."
           sshpass -p '${{ secrets.PSWD }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<'ENDSSH'
-          cd /root
-          if [ ! -d farming ]; then
-              git clone https://github.com/mkt-market/farming_db.git farming
-          fi
-          cd farming
+          cd /root/farming
+          git@github.com:mkt-market/farming_db.git
           git pull origin main
           ENDSSH
