@@ -26,6 +26,7 @@ CREATE TABLE wallet (
     id SERIAL PRIMARY KEY NOT NULL,
     chain_id INT NOT NULL,
     address TEXT NOT NULL,
+    private_key TEXT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id),
     UNIQUE (chain_id, address)
@@ -96,6 +97,7 @@ CREATE TABLE txn_record (
     to_address TEXT NOT NULL,
     token_address TEXT NOT NULL,
     value BIGINT NOT NULL,
+    is_copied BOOLEAN NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
 );
