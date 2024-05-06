@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "Starting deployment..."
           sshpass -p '${{ secrets.PSWD }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<'ENDSSH'
-          cd /root/farming/farming_db
+          cd /root/farming
           git pull origin main
           echo "Deployment completed."
           ENDSSH
