@@ -14,16 +14,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up SSH key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          sudo apt-get install sshpass
+          install -m 600 -D /dev/null ~/.ssh/id_rsa.
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST}} >> ~/.ssh/known_hosts
       - name: Build and Deploy
         run: |
           echo "Starting deployment..."
-          sshpass -p '${{ secrets.PSWD }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} <<'ENDSSH'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd /root/farming
-          git@github.com:mkt-market/farming_db.git
           git pull origin main
-          ENDSSH
+          EOF
