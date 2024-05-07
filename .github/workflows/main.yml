@@ -29,5 +29,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd /root/farming/farming_db
           git pull origin main
-          git pull origin main
           EOF
