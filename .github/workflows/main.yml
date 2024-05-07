@@ -27,6 +27,7 @@ jobs:
         run: |
           echo "Starting deployment..."
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd /root/farming/farming_db
-          git pull origin main
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/mkt-organization -o IdentitiesOnly=yes"
+          cd /root/farming
+          git clone git@github.com:mkt-market/farming_db.git 
           EOF
