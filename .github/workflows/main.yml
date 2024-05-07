@@ -20,7 +20,6 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST}} >> ~/.ssh/known_hosts
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - name: Test SSH configuration
-      - name: Test SSH configuration
         run: |
           ssh -T git@github.com || [ $? -eq 1 ]
 
