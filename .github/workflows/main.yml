@@ -20,7 +20,7 @@ jobs:
       - name: Build and Deploy
         run: |
           echo "Starting deployment..."
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd /root/farming
           git pull origin main
           EOF
