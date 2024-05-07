@@ -23,5 +23,5 @@ jobs:
           echo "Starting deployment..."
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd /root/farming
-          git pull origin main
+          git clone https://github.com/mkt-market/farming_db.git
           EOF
