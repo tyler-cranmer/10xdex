@@ -27,6 +27,12 @@ jobs:
         run: |
           echo "Starting deployment..."
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          whoami
+          echo "Checking current directory..."
+          pwd
+          echo "Listing SSH keys available..."
+          ls -la ~/.ssh
+          echo "Attempting to clone the repository..."
           cd /root/farming
           git clone git@github.com:mkt-market/farming_db.git 
           EOF
