@@ -12,6 +12,10 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update \
     && apk add postgresql-dev gcc python3-dev musl-dev
 
+# Install postgresql-client for checking database connection
+RUN apk add --no-cache postgresql-client
+
+
 # Install dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
@@ -20,7 +24,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Copy the entrypoint script into the container
-COPY entrypoint.sh /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set the entrypoint

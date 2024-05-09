@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   timescaledb:
@@ -20,12 +20,12 @@ services:
     depends_on:
       - timescaledb
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@timescaledb/${POSTGRES_DB}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@{POSTGRES_HOST}:5432/${POSTGRES_DB}
     volumes:
       - ./alembic:/app/alembic
       - ./db:/app/db
       - ./config:/app/config
-    command: ["tail", "-f", "/dev/null"]  # Keeps the container running; actual tasks are managed by entrypoint.sh
+    command: ["tail", "-f", "/dev/null"] # Keeps the container running; actual tasks are managed by entrypoint.sh
 
 volumes:
   timescaledb_data:

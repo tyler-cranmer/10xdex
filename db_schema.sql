@@ -4,7 +4,7 @@ CREATE TABLE chain (
     name TEXT NOT NULL,
     native_token TEXT NOT NULL,
     wrapped_token_address TEXT NOT NULL,
-    dbank_id TEXT NOT NULL, 
+    dbank_id TEXT NOT NULL UNIQUE, 
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -39,7 +39,7 @@ CREATE TABLE protocol (
     tvl DECIMAL(20,5) NOT NULL, 
     tvl_check TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     site_url TEXT NOT NULL,
-    dbank_id TEXT NOT NULL,
+    dbank_id TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
 );
@@ -51,7 +51,7 @@ CREATE TABLE pool (
     name TEXT NOT NULL,
     controller TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (protocol_dbank_id) REFERENCES protocol(id)
+    FOREIGN KEY (protocol_dbank_id) REFERENCES protocol(dbank_id)
 );
 
 CREATE TABLE pool_contract (

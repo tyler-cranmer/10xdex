@@ -1,3 +1,5 @@
 docker-compose up  | starts the container
 
 psql -h localhost -U anton -d farming_timescaledb -f db_schema.sql | run to create initial tables
+
+docker-compose exec db-setup alembic upgrade head

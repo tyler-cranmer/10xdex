@@ -112,11 +112,10 @@ def insert_pools():
 
 
 def main():
-    # insert_chains()
-    # insert_chain_wrapped_tokens()
-    # insert_protocols()
+    insert_chains()
+    insert_chain_wrapped_tokens()
+    insert_protocols()
     # insert_pools()
-    print("Data initialization complete.")
 
 
 if __name__ == "__main__":

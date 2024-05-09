@@ -19,7 +19,7 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade() -> None: 
+def upgrade() -> None:
     # Create 'chain' table
     op.create_table(
         "chain",
@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column("name", sa.Text, nullable=False),
         sa.Column("native_token", sa.Text, nullable=False),
         sa.Column("wrapped_token_address", sa.Text, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False),
+        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
         sa.Column(
             "created_at",
             postgresql.TIMESTAMP(timezone=True),
@@ -89,7 +89,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
         sa.Column("site_url", sa.Text, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False),
+        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
         sa.Column(
             "created_at",
             postgresql.TIMESTAMP(timezone=True),
@@ -102,7 +102,7 @@ def upgrade() -> None:
     op.create_table(
         "pool",
         sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False),
+        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
         sa.Column("protocol_dbank_id", sa.TEXT, nullable=False),
         sa.Column("name", sa.Text, nullable=False),
         sa.Column("controller", sa.Text, nullable=False),
@@ -111,7 +111,7 @@ def upgrade() -> None:
             postgresql.TIMESTAMP(timezone=True),
             server_default=sa.text("CURRENT_TIMESTAMP"),
         ),
-        sa.ForeignKeyConstraint(["protocol_dbank_id"], ["protocol.id"]),
+        sa.ForeignKeyConstraint(["protocol_dbank_id"], ["protocol.dbank_id"]),
     )
 
     # Create 'pool_contract' table
