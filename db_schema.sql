@@ -15,7 +15,7 @@ CREATE TABLE token (
     name TEXT NOT NULL,
     symbol TEXT NOT NULL,
     decimals INT NOT NULL,
-    usd_value DOUBLE PRECISION NOT NULL,
+    usd_value DECIMAL(20,5) NOT NULL,
     usd_check TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id),
@@ -36,7 +36,7 @@ CREATE TABLE protocol (
     id SERIAL PRIMARY KEY NOT NULL,
     chain_id INT NOT NULL,
     name TEXT NOT NULL,
-    tvl DOUBLE PRECISION NOT NULL, 
+    tvl DECIMAL(20,5) NOT NULL, 
     tvl_check TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     site_url TEXT NOT NULL,
     dbank_id TEXT NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE protocol (
 CREATE TABLE pool (
     id SERIAL PRIMARY KEY NOT NULL,
     dbank_id TEXT NOT NULL UNIQUE,
-    protocol_dbank_id INT NOT NULL,
+    protocol_dbank_id TEXT NOT NULL,
     name TEXT NOT NULL,
     controller TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
@@ -62,14 +62,6 @@ CREATE TABLE pool_contract (
     FOREIGN KEY (pool_dbank_id) REFERENCES pool(dbank_id)
 );
 
--- CREATE TABLE copied_txn (
---     id SERIAL PRIMARY KEY NOT NULL,
---     chain_id INT NOT NULL,
---     hash TEXT NOT NULL,
---     private_key TEXT NOT NULL,
---     time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
---     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
--- );
 
 -- HYPER TABLES --
 
@@ -77,7 +69,7 @@ CREATE TABLE wallet_token_balance (
     id SERIAL NOT NULL,
     wallet_id INT NOT NULL,
     token_id INT NOT NULL,
-    balance BIGINT NOT NULL,
+    balance DECIMAL(30,0) NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL,
     FOREIGN KEY (wallet_id) REFERENCES wallet(id),
     FOREIGN KEY (token_id) REFERENCES token(id)
@@ -96,7 +88,7 @@ CREATE TABLE txn_record (
     from_address TEXT NOT NULL,
     to_address TEXT NOT NULL,
     token_address TEXT NOT NULL,
-    value BIGINT NOT NULL,
+    value DECIMAL(30,0) NOT NULL,
     is_copied BOOLEAN NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL,
     FOREIGN KEY (chain_id) REFERENCES chain(chain_id)
@@ -111,7 +103,7 @@ CREATE INDEX from_address_idx ON txn_record (from_address, time DESC);
 CREATE TABLE pool_stats (
     id SERIAL NOT NULL,
     pool_dbank_id TEXT NOT NULL,
-    deposited_usd_value DECIMAL(65, 18) NOT NULL,
+    deposited_usd_value DECIMAL(20,5) NOT NULL,
     deposited_user_count INT NOT NULL,
     deposited_valable_user_count INT NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL
@@ -126,9 +118,9 @@ CREATE TABLE wallet_protocol_balance (
     id SERIAL NOT NULL,
     wallet_id INT NOT NULL,
     protocol_dbank_id TEXT NOT NULL,
-    net_usd_value BIGINT NOT NULL,
-    asset_usd_value BIGINT NOT NULL,
-    debt_usd_value BIGINT NOT NULL,
+    net_usd_value DECIMAL(20,5) NOT NULL,
+    asset_usd_value DECIMAL(20,5) NOT NULL,
+    debt_usd_value DECIMAL(20,5) NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL
 );
 

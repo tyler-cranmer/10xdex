@@ -18,3 +18,7 @@ class Settings(BaseSettings):
     POSTGRES_PORT: str = Field(validation_alias="POSTGRES_PORT")
     POSTGRES_HOST: str = Field(validation_alias="POSTGRES_HOST")
     debank_api_key: str = Field(validation_alias="DEBANK_API_KEY")
+
+
+def get_postgres_uri(settings: Settings = Settings()) -> str:
+    return f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"

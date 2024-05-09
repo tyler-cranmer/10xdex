@@ -14,6 +14,19 @@ services:
     volumes:
       - timescaledb_data:/var/lib/postgresql/data
 
+  db-setup:
+    build: .
+    container_name: farming_db_setup
+    depends_on:
+      - timescaledb
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@timescaledb/${POSTGRES_DB}
+    volumes:
+      - ./alembic:/app/alembic
+      - ./db:/app/db
+      - ./config:/app/config
+    command: ["tail", "-f", "/dev/null"]  # Keeps the container running; actual tasks are managed by entrypoint.sh
+
 volumes:
   timescaledb_data:
     driver: local

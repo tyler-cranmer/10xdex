@@ -116,15 +116,7 @@ def main():
     # insert_chain_wrapped_tokens()
     # insert_protocols()
     # insert_pools()
-    wallet_db = WalletDB()
-    base = WalletBase(
-        address="0x1234567890",
-        chain_id=1,
-    )
-    wallet = wallet_db.insert(base)
-    print(wallet)
-
-    pass
+    print("Data initialization complete.")
 
 
 if __name__ == "__main__":
