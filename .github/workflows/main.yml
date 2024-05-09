@@ -36,8 +36,25 @@ jobs:
             cp /root/farming/.env /root/farming/farming_db/.env
             docker-compose down
             docker-compose up --build -d
-
             echo "Deployment completed."
+
+            echo "Waiting for database to become ready..."
+            timeout=180 # Set timeout in seconds (e.g., 180 seconds or 3 minutes)
+            while [ $timeout -gt 0 ]; do
+                if [ "$(docker-compose ps -q timescaledb | xargs docker inspect -f '{{.State.Health.Status}}')" == "healthy" ]; then
+                    echo "Database is ready."
+                    break
+                fi
+                sleep 10
+                echo "Waiting for database..."
+                timeout=$((timeout - 10))
+            done
+
+            if [ $timeout -le 0 ]; then
+                echo "Timed out waiting for database to become ready."
+                exit 1 # Exit with an error
+            fi
+
             echo "Prepairing migrations..."
             docker-compose exec db-setup alembic upgrade head
             echo "Migrations completed."
@@ -53,8 +70,25 @@ jobs:
             cp /root/farming/.env /root/farming/farming_db/.env
             docker-compose down
             docker-compose up --build -d
-
             echo "Deployment completed."
+
+            echo "Waiting for database to become ready..."
+            timeout=180 # Set timeout in seconds (e.g., 180 seconds or 3 minutes)
+            while [ $timeout -gt 0 ]; do
+                if [ "$(docker-compose ps -q timescaledb | xargs docker inspect -f '{{.State.Health.Status}}')" == "healthy" ]; then
+                    echo "Database is ready."
+                    break
+                fi
+                sleep 10
+                echo "Waiting for database..."
+                timeout=$((timeout - 10))
+            done
+
+            if [ $timeout -le 0 ]; then
+                echo "Timed out waiting for database to become ready."
+                exit 1 # Exit with an error
+            fi
+
             echo "Prepairing migrations..."
             docker-compose exec db-setup alembic upgrade head
             echo "Migrations completed."
