@@ -1,2 +1,2 @@
-from .settings import Settings
-from .settings import get_postgres_uri
+from config.settings import Settings
+from config.settings import get_postgres_uri

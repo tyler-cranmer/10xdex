@@ -2,3 +2,5 @@ pydantic-settings
 psycopg2-binary
 requests
 alembic
+selenium
+pandas
