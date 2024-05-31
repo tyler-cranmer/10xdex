@@ -128,6 +128,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["pool_dbank_id"], ["pool.dbank_id"]),
     )
 
+    # Create 'wallet_token_balance' table
     op.create_table(
         "wallet_token_balance",
         sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
@@ -223,15 +224,16 @@ def upgrade() -> None:
         postgresql_ops={"time": "DESC"},
     )
 
+    # Create 'pool_stats' table
     op.create_table(
         "pool_stats",
         sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
         sa.Column("pool_dbank_id", sa.Text, nullable=False),
         sa.Column(
-            "deposited_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False
+            "deposit_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False
         ),
-        sa.Column("deposited_user_count", sa.Integer, nullable=False),
-        sa.Column("deposited_valable_user_count", sa.Integer, nullable=False),
+        sa.Column("deposit_user_count", sa.Integer, nullable=False),
+        sa.Column("deposit_valable_user_count", sa.Integer, nullable=False),
         sa.Column(
             "time",
             postgresql.TIMESTAMP(timezone=True),

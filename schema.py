@@ -244,12 +244,12 @@ class PoolStatsBase(BaseModel):
 
     Attributes:
         pool_dbank_id: The id of the pool the stats belong to.
-        deposited_usd_value: The deposited USD value in the pool. Defaults to 0 if not provided.
+        deposit_usd_value: The deposited USD value in the pool. Defaults to 0 if not provided.
         deposit_user_count: The number of users who deposited in the pool. Defaults to 0 if not provided.
         deposit_valuable_user_count: The number of valuable users who deposited in the pool. Defaults to 0 if not provided.
     """
     pool_dbank_id: str
-    deposited_usd_value: Optional[Decimal] = None
+    deposit_usd_value: Optional[Decimal] = None
     deposit_user_count: Optional[int] = None
     deposit_valuable_user_count: Optional[int] = None
 

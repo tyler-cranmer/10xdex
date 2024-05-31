@@ -103,9 +103,9 @@ CREATE INDEX from_address_idx ON txn_record (from_address, time DESC);
 CREATE TABLE pool_stats (
     id SERIAL NOT NULL,
     pool_dbank_id TEXT NOT NULL,
-    deposited_usd_value DECIMAL(20,5) NOT NULL,
-    deposited_user_count INT NOT NULL,
-    deposited_valable_user_count INT NOT NULL,
+    deposit_usd_value DECIMAL(20,5) NOT NULL,
+    deposit_user_count INT NOT NULL,
+    deposit_valable_user_count INT NOT NULL,
     time TIMESTAMPTZ PRIMARY KEY NOT NULL
 );
 

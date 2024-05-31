@@ -1,13 +1,15 @@
 import psycopg2
+from psycopg2.extras import DictCursor
 from psycopg2.errors import UniqueViolation
 from schema import ChainBase, Chain
 from config import Settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 s = Settings()
 
-
 class ChainDB:
-
     def __init__(self):
         self.settings = s
 
@@ -17,15 +19,14 @@ class ChainDB:
             user=self.settings.POSTGRES_USER,
             password=self.settings.POSTGRES_PASSWORD,
             dbname=self.settings.POSTGRES_DB,
+            cursor_factory=DictCursor
         )
 
     def insert(self, chain: ChainBase):
         '''
         Insert a new chain into the database
         '''
-
-        conn = None # Initialize connection to None
-
+        conn = None
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
@@ -45,13 +46,13 @@ class ChainDB:
         except UniqueViolation as e:
             if conn:
                 conn.rollback()
-            print(f"Chain already exists: {chain.name}.\nError: {e}")
+            logger.error(f"Chain already exists: {chain.name}.\nError: {e}")
 
         except Exception as e:
             if conn:
                 conn.rollback()
-            print(f"An error occurred: {e}")
-            
+            logger.error(f"An error occurred: {e}")
+
     def get_chain_dbank_id(self, dbank_id):
         '''
         Retrieves a chain object from the database using the dbank_id
@@ -62,13 +63,13 @@ class ChainDB:
             if row is None:
                 return None
             return Chain(
-                id=row[0],
-                chain_id=row[1],
-                name=row[2],
-                native_token=row[3],
-                wrapped_token_address=row[4],
-                dbank_id=row[5],
-                created_at=row[6],
+                id=row['id'],
+                chain_id=row['chain_id'],
+                name=row['name'],
+                native_token=row['native_token'],
+                wrapped_token_address=row['wrapped_token_address'],
+                dbank_id=row['dbank_id'],
+                created_at=row['created_at'],
             )
 
     def get_all_chains(self):
@@ -82,13 +83,13 @@ class ChainDB:
             rows = cur.fetchall()
             return [
                 Chain(
-                    id=row[0],
-                    chain_id=row[1],
-                    name=row[2],
-                    native_token=row[3],
-                    wrapped_token_address=row[4],
-                    dbank_id=row[5],
-                    created_at=row[6],
+                    id=row['id'],
+                    chain_id=row['chain_id'],
+                    name=row['name'],
+                    native_token=row['native_token'],
+                    wrapped_token_address=row['wrapped_token_address'],
+                    dbank_id=row['dbank_id'],
+                    created_at=row['created_at'],
                 )
                 for row in rows
             ]
