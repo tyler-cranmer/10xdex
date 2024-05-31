@@ -113,7 +113,6 @@ SELECT create_hypertable('pool_stats', by_range('time'));
 
 CREATE INDEX pool_stats_idx ON pool_stats (pool_dbank_id, time DESC);
 
-
 CREATE TABLE wallet_protocol_balance (
     id SERIAL NOT NULL,
     wallet_id INT NOT NULL,
