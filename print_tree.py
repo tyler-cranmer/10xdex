@@ -23,5 +23,4 @@ def print_directory_structure(start_path):
 
 if __name__ == "__main__":
     start_path = "."  # Current directory
-    # start_path = "/Users/tylercranmer/Dev/crypto/canto/mkt/fe-referral"
     print_directory_structure(start_path)
