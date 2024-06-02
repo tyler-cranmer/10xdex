@@ -9,8 +9,8 @@ import requests
 from db import ChainDB, TokenDB
 from config import Settings
 from db.protocol_db import ProtocolDB
-from db.wallet_db import WalletDB
-from schema import ChainBase, ProtocolBase, TokenBase, WalletBase
+from db.wallets_db import WalletDB
+from db.old.schema_old import ChainBase, ProtocolBase, TokenBase, WalletBase
 from datetime import datetime, timezone
 
 s = Settings()

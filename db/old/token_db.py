@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2.errors import UniqueViolation
-from schema import TokenBase, Token
+from db.old.schema_old import TokenBase, Token
 from config import Settings
 import logging
 

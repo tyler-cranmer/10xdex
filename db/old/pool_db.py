@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2.errors import UniqueViolation
 from config import Settings
-from schema import PoolBase, Pool, PoolContract, PoolContractBase, PoolStats, PoolStatsBase, PoolWithContracts
+from db.old.schema_old import PoolBase, Pool, PoolContract, PoolContractBase, PoolStats, PoolStatsBase, PoolWithContracts
 import logging
 
 s = Settings()
