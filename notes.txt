@@ -5,16 +5,15 @@ psql -h localhost -U anton -d farming_timescaledb -f db_schema.sql | run to crea
 docker-compose exec db-setup alembic upgrade head
 
 
-
-Uniswap Contracts:
-https://docs.uniswap.org/contracts/v3/reference/deployments/base-deployments
-
-
-Sushiswap:
-
-0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891 router v2
+CDP_RPC = 500M BU / Month 50 RPS
+https://portal.cdp.coinbase.com/products/node
 
 
-1inch:
+1RPC = 10k BU / day
 
-0x1111111254EEB25477B68fb85Ed929f73A960582 Aggregation Router v5
+anker = 50 requests / min, 30 request second, 
+https://www.ankr.com/rpc/advanced-api/
+
+
+blast = 12m API calls / Month 40api calls /s 
+https://blastapi.io/pricing
