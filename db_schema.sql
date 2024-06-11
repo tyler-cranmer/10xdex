@@ -17,7 +17,7 @@ CREATE TABLE tokens (
     address TEXT NOT NULL UNIQUE,
     name TEXT,
     symbol TEXT,
-    decimals INT,
+    decimal INT,
 );
 
 CREATE TABLE ownership_history (
@@ -58,13 +58,13 @@ SELECT create_hypertable('transactions', 'timestamp');
 
 CREATE TABLE profit_loss (
     id SERIAL PRIMARY KEY,
-    wallet_id INT NOT NULL,
-    token_id INT NOT NULL,
+    wallet_address INT NOT NULL,
+    token_address INT NOT NULL,
     profit_loss NUMERIC NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL,  -- Use timestamp to track changes over time
-    FOREIGN KEY (wallet_id) REFERENCES wallets(id),
-    FOREIGN KEY (token_id) REFERENCES tokens(id),
-    UNIQUE (wallet_id, token_id, timestamp)
+    FOREIGN KEY (wallet_address) REFERENCES wallets(address),
+    FOREIGN KEY (token_address) REFERENCES tokens(address),
+    UNIQUE (wallet_address, token_address, timestamp)
 );
 
 SELECT create_hypertable('profit_loss', 'timestamp');
