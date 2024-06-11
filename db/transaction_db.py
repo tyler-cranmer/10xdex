@@ -31,7 +31,7 @@ class TransactionDB:
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
-                    "INSERT INTO transactions (tx_hash, block_number, from_address, to_address, value, timestamp) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+                    "INSERT INTO transaction (tx_hash, block_number, from_address, to_address, value, timestamp) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
                     (
                         transaction.tx_hash,
                         transaction.block_number,
@@ -59,7 +59,7 @@ class TransactionDB:
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id, tx_hash, block_number, from_address, to_address, value, timestamp FROM transactions WHERE tx_hash = %s",
+                    "SELECT id, tx_hash, block_number, from_address, to_address, value, timestamp FROM transaction WHERE tx_hash = %s",
                     (tx_hash,),
                 )
                 row = cur.fetchone()

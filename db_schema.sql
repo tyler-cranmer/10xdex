@@ -3,7 +3,7 @@
 
 CREATE EXTENSION IF NOT EXISTS timescaleDB;
 
-CREATE TABLE wallets (
+CREATE TABLE wallet (
     id SERIAL PRIMARY KEY,
     address TEXT NOT NULL UNIQUE,
     first_seen TIMESTAMPTZ,
@@ -12,12 +12,12 @@ CREATE TABLE wallets (
     total_sent NUMERIC DEFAULT 0
 );
 
-CREATE TABLE tokens (
+CREATE TABLE token (
     id SERIAL PRIMARY KEY,
     address TEXT NOT NULL UNIQUE,
     name TEXT,
     symbol TEXT,
-    decimal INT,
+    decimal INT
 );
 
 CREATE TABLE ownership_history (
@@ -26,7 +26,7 @@ CREATE TABLE ownership_history (
     token_address TEXT NOT NULL,
     tx_hash TEXT NOT NULL,
     block_number INT NOT NULL,
-    change NUMERIC NOT NULL,
+    change DECIMAL(30,0) NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 SELECT create_hypertable('ownership_history', 'timestamp');
@@ -37,34 +37,34 @@ CREATE TABLE wallet_token_balance (
     token_id INT NOT NULL,
     balance DECIMAL(30,0) NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
-    FOREIGN KEY (wallet_id) REFERENCES wallets(id),
-    FOREIGN KEY (token_id) REFERENCES tokens(id),
-    UNIQUE (wallet_id, token_id, time)
+    FOREIGN KEY (wallet_id) REFERENCES wallet(id),
+    FOREIGN KEY (token_id) REFERENCES token(id),
+    UNIQUE (wallet_id, token_id, timestamp)
 );
 
 SELECT create_hypertable('wallet_token_balance', 'timestamp');
 
-CREATE TABLE transactions (
+CREATE TABLE transaction (
     id SERIAL PRIMARY KEY,
     tx_hash TEXT NOT NULL UNIQUE,
     block_number INT NOT NULL,
-    from_address TEXT,
-    to_address TEXT,
-    token_address TEXT,
-    value NUMERIC,
-    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    from_address TEXT NOT NULL,
+    to_address TEXT NOT NULL,
+    token_address TEXT NOT NULL,
+    value DECIMAL(30,0) NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL
 );
-SELECT create_hypertable('transactions', 'timestamp');
+SELECT create_hypertable('transaction', 'timestamp');
 
 CREATE TABLE profit_loss (
     id SERIAL PRIMARY KEY,
-    wallet_address INT NOT NULL,
-    token_address INT NOT NULL,
+    wallet_id INT NOT NULL,
+    token_id INT NOT NULL,
     profit_loss NUMERIC NOT NULL,
-    timestamp TIMESTAMPTZ NOT NULL,  -- Use timestamp to track changes over time
-    FOREIGN KEY (wallet_address) REFERENCES wallets(address),
-    FOREIGN KEY (token_address) REFERENCES tokens(address),
-    UNIQUE (wallet_address, token_address, timestamp)
+    timestamp TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (wallet_id) REFERENCES wallet(id),
+    FOREIGN KEY (token_id) REFERENCES token(id),
+    UNIQUE (wallet_id, token_id, timestamp)
 );
 
 SELECT create_hypertable('profit_loss', 'timestamp');

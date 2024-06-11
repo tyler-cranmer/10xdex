@@ -167,13 +167,13 @@ class ProfitLossBase(BaseModel):
     """ Base Profit Loss Model
 
     Attributes:
-        wallet_address: The wallet address
-        token_address: The token address
+        wallet_id: The wallet id
+        token_id: token id
         profit_loss: The profit or loss
         timestamp: The timestamp of the profit or loss
     """
-    wallet_address: str
-    token_address: str
+    wallet_id: int
+    token_id: int
     profit_loss: Decimal
     timestamp: datetime
 
@@ -182,8 +182,8 @@ class ProfitLoss(ProfitLossBase):
 
     Attributes:
         id: The profit loss id
-        wallet_address: The wallet address
-        token_address: The token address
+        wallet_id: The wallet id
+        token_id: token id
         profit_loss: The profit or loss
         timestamp: The timestamp of the profit or loss
     """
@@ -212,4 +212,3 @@ class PriceData(PriceDataBase):
         timestamp: The timestamp of the price
     """
     id: int
-    

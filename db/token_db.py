@@ -27,7 +27,7 @@ class TokenDB:
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
-                    "INSERT INTO tokens (address, name, symbol, decimal) VALUES (%s, %s, %s, %s) RETURNING id",
+                    "INSERT INTO token (address, name, symbol, decimal) VALUES (%s, %s, %s, %s) RETURNING id",
                     (token.address, token.name, token.symbol, token.decimal),
                 )
                 token_id = cur.fetchone()[0]
@@ -41,7 +41,7 @@ class TokenDB:
     def get_all_tokens(self) -> list[Token]:
         try:
             with self._connect() as conn, conn.cursor() as cur:
-                cur.execute("SELECT id, address, name, symbol, decimal FROM tokens")
+                cur.execute("SELECT id, address, name, symbol, decimal FROM token")
                 rows = cur.fetchall()
                 return [
                     Token(
@@ -61,7 +61,7 @@ class TokenDB:
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id, address, name, symbol, decimal FROM tokens WHERE address = %s",
+                    "SELECT id, address, name, symbol, decimal FROM token WHERE address = %s",
                     (address,),
                 )
                 row = cur.fetchone()
@@ -83,7 +83,7 @@ class TokenDB:
         try:
             with self._connect() as conn, conn.cursor() as cur:
                 cur.execute(
-                    "SELECT id, address, name, symbol, decimal FROM tokens WHERE name = %s",
+                    "SELECT id, address, name, symbol, decimal FROM token WHERE name = %s",
                     (name,),
                 )
                 row = cur.fetchone()
