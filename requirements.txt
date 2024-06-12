@@ -1,6 +1,9 @@
+pydantic
 pydantic-settings
 psycopg2-binary
 requests
 alembic
 selenium
 pandas
+httpx
+web3

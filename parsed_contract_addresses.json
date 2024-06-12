@@ -1,0 +1,232 @@
+[
+    {
+        "folder": "Aerodrome",
+        "file": "Universal_Router",
+        "address": "0x6Cb442acF35158D5eDa88fe602221b67B400Be3E"
+    },
+    {
+        "folder": "SwapBased",
+        "file": "BASE_Token",
+        "address": "0xd07379a755A8f11B57610154861D694b2A0f615a"
+    },
+    {
+        "folder": "DackieSwap",
+        "file": "V2_Router",
+        "address": "0xCa4EAa32E7081b0c4Ba47e2bDF9B7163907Fe56f"
+    },
+    {
+        "folder": "Izumi_Finance",
+        "file": "swap",
+        "address": "0x02F55D53DcE23B4AA962CC68b0f685f26143Bdb2"
+    },
+    {
+        "folder": "Squid",
+        "file": "Router",
+        "address": "0xce16F69375520ab01377ce7B88f5BA8C48F8D666"
+    },
+    {
+        "folder": "DackieSwap",
+        "file": "Non_fungible_Position_Manager",
+        "address": "0xCfB05AB06D338FD85BBF4486e69809D96A906b77"
+    },
+    {
+        "folder": "AlienBase",
+        "file": "Router",
+        "address": "0x8c1A3cF8f83074169FE5D7aD50B978e1cD6b37c7"
+    },
+    {
+        "folder": "BSX_Exchange",
+        "file": "Contract",
+        "address": "0x26A54955a5fb9472D3eDFeAc9B8E4c0ab5779eD3"
+    },
+    {
+        "folder": "Chainlink",
+        "file": "CCIP_Router",
+        "address": "0x881e3A65B4d4a04dD529061dd0071cf975F58bCD"
+    },
+    {
+        "folder": "ReHold",
+        "file": "Router",
+        "address": "0xA04295018eB7353a9755A2B227c9203FED3D9B7C"
+    },
+    {
+        "folder": "Zerion",
+        "file": "Router",
+        "address": "0xd7F1Dd5D49206349CaE8b585fcB0Ce3D96f1696F"
+    },
+    {
+        "folder": "PancakeSwap",
+        "file": "Universal_Router",
+        "address": "0xFE6508f0015C778Bdcc1fB5465bA5ebE224C9912"
+    },
+    {
+        "folder": "DackieSwap",
+        "file": "DACKIE_Token",
+        "address": "0xc2BC7A73613B9bD5F373FE10B55C59a69F4D617B"
+    },
+    {
+        "folder": "Uniswap",
+        "file": "V2_Router02",
+        "address": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24"
+    },
+    {
+        "folder": "Odos",
+        "file": "Router_V2",
+        "address": "0x19cEeAd7105607Cd444F5ad10dd51356436095a1"
+    },
+    {
+        "folder": "UNCX_Lockers",
+        "file": "UniSwap_V3_LP",
+        "address": "0x231278eDd38B00B07fBd52120CEf685B9BaEBCC1"
+    },
+    {
+        "folder": "Paraswap_v5",
+        "file": "Augustus_Swapper",
+        "address": "0x59C7C832e96D2568bea6db468C1aAdcbbDa08A52"
+    },
+    {
+        "folder": "Bitget_Wallet",
+        "file": "Swap_Router_v1",
+        "address": "0x1A8f43e01B78979EB4Ef7feBEC60F32c9A72f58E"
+    },
+    {
+        "folder": "Vela_Exchange",
+        "file": "Order_Vault",
+        "address": "0x52AC3eda13EB7959f918Df02a72d0f6c9C703523"
+    },
+    {
+        "folder": "Synapse",
+        "file": "Router",
+        "address": "0x7E7A0e201FD38d3ADAA9523Da6C109a07118C96a"
+    },
+    {
+        "folder": "Banana_Gun",
+        "file": "Router",
+        "address": "0x1Fba6b0BBae2B74586fBA407Fb45Bd4788B7b130"
+    },
+    {
+        "folder": "SwapBased",
+        "file": "Uniswap_V2_Router_02",
+        "address": "0xaaa3b1F1bd7BCc97fD1917c18ADE665C5D31F066"
+    },
+    {
+        "folder": "PancakeSwap_V3",
+        "file": "Smart_Router",
+        "address": "0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86"
+    },
+    {
+        "folder": "Uniswap",
+        "file": "Universal_Router_V1_2_V2Support",
+        "address": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+    },
+    {
+        "folder": "KyberSwap",
+        "file": "Meta_Aggregation_Router_v2",
+        "address": "0x6131B5fae19EA4f9D964eAc0408E4408b66337b5"
+    },
+    {
+        "folder": "1inch",
+        "file": "Aggregation_Router_V6",
+        "address": "0x111111125421cA6dc452d289314280a0f8842A65"
+    },
+    {
+        "folder": "Uniswap",
+        "file": "Universal_Router_V1_2",
+        "address": "0xeC8B0F7Ffe3ae75d7FfAb09429e3675bb63503e4"
+    },
+    {
+        "folder": "0x",
+        "file": "Exchange_Proxy",
+        "address": "0xDef1C0ded9bec7F1a1670819833240f027b25EfF"
+    },
+    {
+        "folder": "SwapBased",
+        "file": "xBASE_Token",
+        "address": "0xeF94C12Ba5Bb2bF56E19BABfa56880487FEA6E82"
+    },
+    {
+        "folder": "Aerodrome",
+        "file": "Router",
+        "address": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"
+    },
+    {
+        "folder": "Synthswap",
+        "file": "MasterChef",
+        "address": "0xEF153cb7bfc04c657Cb7f582C7411556320098B9"
+    },
+    {
+        "folder": "Uniswap",
+        "file": "Universal_Router",
+        "address": "0x198EF79F1F515F02dFE9e3115eD9fC07183f02fC"
+    },
+    {
+        "folder": "Overnight_Finance",
+        "file": "Exchange",
+        "address": "0x7cb1B38591021309C64f451859d79312d8Ca2789"
+    },
+    {
+        "folder": "OpenOcean",
+        "file": "Exchange_V2",
+        "address": "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64"
+    },
+    {
+        "folder": "BaseSwap",
+        "file": "BSWAP_Token",
+        "address": "0x78a087d713Be963Bf307b18F2Ff8122EF9A63ae9"
+    },
+    {
+        "folder": "Nether.Fi",
+        "file": "Reward_Router_V2",
+        "address": "0xb36aaF73604993ace5E97f660Ac364EdCd82E395"
+    },
+    {
+        "folder": "Alfred",
+        "file": "Router",
+        "address": "0xcA8Be23830744b208F9cBa488B373b189618b9E8"
+    },
+    {
+        "folder": "Bitget_Wallet",
+        "file": "Swap_Bridge",
+        "address": "0x22cE84A7F86662b78E49C6ec9E51D60FddE7b70A"
+    },
+    {
+        "folder": "Synthswap",
+        "file": "SYNTH_Token",
+        "address": "0xbd2DBb8eceA9743CA5B16423b4eAa26bDcfE5eD2"
+    },
+    {
+        "folder": "Uniswap_V3",
+        "file": "Swap_Router02",
+        "address": "0x2626664c2603336E57B271c5C0b26F421741e481"
+    },
+    {
+        "folder": "1inch",
+        "file": "Aggregation_Router_V5",
+        "address": "0x1111111254EEB25477B68fb85Ed929f73A960582"
+    },
+    {
+        "folder": "DackieSwap",
+        "file": "QUACK_Token",
+        "address": "0x639C0D019C257966C4907bD4E68E3F349bB58109"
+    },
+    {
+        "folder": "Stargate",
+        "file": "Router",
+        "address": "0x45f1A95A4D3f3836523F5c83673c797f4d4d263B"
+    },
+    {
+        "folder": "Sushi",
+        "file": "Router_v2",
+        "address": "0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891"
+    },
+    {
+        "folder": "Stargate",
+        "file": "Router_ETH",
+        "address": "0x50B6EbC2103BFEc165949CC946d739d5650d7ae4"
+    },
+    {
+        "folder": "XY_Finance",
+        "file": "XY_Router",
+        "address": "0x6aCd0Ec9405CcB701c57A88849C4F1CD85a3f3ab"
+    }
+]

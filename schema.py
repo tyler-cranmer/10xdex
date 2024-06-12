@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Dict
 from pydantic import BaseModel
 
 class WalletBase(BaseModel):
@@ -212,3 +213,37 @@ class PriceData(PriceDataBase):
         timestamp: The timestamp of the price
     """
     id: int
+
+
+
+
+
+
+
+# HELPER TYPES
+class CoinGeckoToken(BaseModel):
+    """ CoinGecko Token Model
+
+    Attributes:
+        id: The token id
+        symbol: The token symbol
+        name: The token name
+        platforms: The token platforms
+    """
+    id: str
+    symbol: str
+    name: str
+    platforms: Dict[str, str]
+
+
+class ContractAddressJson(BaseModel):
+    """ Contract Address JSON Model
+
+    Attributes:
+        folder: The folder name
+        file: The file name
+        address: The contract address
+    """
+    folder: str
+    file: str
+    address: str

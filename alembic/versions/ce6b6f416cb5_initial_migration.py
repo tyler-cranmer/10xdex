@@ -19,313 +19,89 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade() -> None:
-    # Create 'chain' table
-    op.create_table(
-        "chain",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("chain_id", sa.Integer, unique=True, nullable=False),
-        sa.Column("name", sa.Text, nullable=False),
-        sa.Column("native_token", sa.Text, nullable=False),
-        sa.Column("wrapped_token_address", sa.Text, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
+def upgrade():
+    op.execute("CREATE EXTENSION IF NOT EXISTS timescaleDB")
+
+    op.create_table('wallet',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('address', sa.Text, nullable=False, unique=True),
+        sa.Column('first_seen', sa.TIMESTAMP(timezone=True)),
+        sa.Column('last_seen', sa.TIMESTAMP(timezone=True)),
+        sa.Column('total_received', sa.Numeric, default=0),
+        sa.Column('total_sent', sa.Numeric, default=0)
     )
 
-    # Create 'token' table
-    op.create_table(
-        "token",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("chain_id", sa.Integer, nullable=False),
-        sa.Column("address", sa.Text, nullable=False),
-        sa.Column("name", sa.Text, nullable=False),
-        sa.Column("symbol", sa.Text, nullable=False),
-        sa.Column("decimals", sa.Integer, nullable=False),
-        sa.Column("usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False),
-        sa.Column(
-            "usd_check",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.ForeignKeyConstraint(["chain_id"], ["chain.chain_id"]),
-        sa.UniqueConstraint("chain_id", "address", "name", "symbol"),
+    op.create_table('token',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('address', sa.Text, nullable=False, unique=True),
+        sa.Column('name', sa.Text),
+        sa.Column('symbol', sa.Text),
+        sa.Column('decimal', sa.Integer)
     )
 
-    # Create 'wallet' table
-    op.create_table(
-        "wallet",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("chain_id", sa.Integer, nullable=False),
-        sa.Column("address", sa.Text, nullable=False),
-        sa.Column("private_key", sa.Text, nullable=True),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.ForeignKeyConstraint(["chain_id"], ["chain.chain_id"]),
-        sa.UniqueConstraint("chain_id", "address"),
+    op.create_table('ownership_history',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('address', sa.Text, nullable=False),
+        sa.Column('token_address', sa.Text, nullable=False),
+        sa.Column('tx_hash', sa.Text, nullable=False),
+        sa.Column('block_number', sa.Integer, nullable=False),
+        sa.Column('change', sa.Numeric(30, 0), nullable=False),
+        sa.Column('timestamp', sa.TIMESTAMP(timezone=True), nullable=False, server_default=sa.func.now())
     )
+    op.execute("SELECT create_hypertable('ownership_history', 'timestamp')")
 
-    # Create 'protocol' table
-    op.create_table(
-        "protocol",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("chain_id", sa.Integer, nullable=False),
-        sa.Column("name", sa.Text, nullable=False),
-        sa.Column("tvl", sa.DECIMAL(precision=20, scale=5), nullable=False),
-        sa.Column(
-            "tvl_check",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.Column("site_url", sa.Text, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.ForeignKeyConstraint(["chain_id"], ["chain.chain_id"]),
+    op.create_table('wallet_token_balance',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('wallet_id', sa.Integer, nullable=False),
+        sa.Column('token_id', sa.Integer, nullable=False),
+        sa.Column('balance', sa.Numeric(30, 0), nullable=False),
+        sa.Column('timestamp', sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.ForeignKeyConstraint(['wallet_id'], ['wallet.id']),
+        sa.ForeignKeyConstraint(['token_id'], ['token.id']),
+        sa.UniqueConstraint('wallet_id', 'token_id', 'timestamp')
     )
+    op.execute("SELECT create_hypertable('wallet_token_balance', 'timestamp')")
 
-    # Create 'pool' table
-    op.create_table(
-        "pool",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("dbank_id", sa.Text, nullable=False, unique=True),
-        sa.Column("protocol_dbank_id", sa.TEXT, nullable=False),
-        sa.Column("name", sa.Text, nullable=False),
-        sa.Column("controller", sa.Text, nullable=False),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.ForeignKeyConstraint(["protocol_dbank_id"], ["protocol.dbank_id"]),
+    op.create_table('transaction',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('tx_hash', sa.Text, nullable=False, unique=True),
+        sa.Column('block_number', sa.Integer, nullable=False),
+        sa.Column('from_address', sa.Text, nullable=False),
+        sa.Column('to_address', sa.Text, nullable=False),
+        sa.Column('token_address', sa.Text, nullable=False),
+        sa.Column('value', sa.Numeric(30, 0), nullable=False),
+        sa.Column('timestamp', sa.TIMESTAMP(timezone=True), nullable=False)
     )
+    op.execute("SELECT create_hypertable('transaction', 'timestamp')")
 
-    # Create 'pool_contract' table
-    op.create_table(
-        "pool_contract",
-        sa.Column("id", sa.Integer, primary_key=True, nullable=False),
-        sa.Column("pool_dbank_id", sa.Text, nullable=False),
-        sa.Column("address", sa.Text, nullable=False),
-        sa.Column(
-            "created_at",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-        ),
-        sa.ForeignKeyConstraint(["pool_dbank_id"], ["pool.dbank_id"]),
+    op.create_table('profit_loss',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('wallet_id', sa.Integer, nullable=False),
+        sa.Column('token_id', sa.Integer, nullable=False),
+        sa.Column('profit_loss', sa.Numeric, nullable=False),
+        sa.Column('timestamp', sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.ForeignKeyConstraint(['wallet_id'], ['wallet.id']),
+        sa.ForeignKeyConstraint(['token_id'], ['token.id']),
+        sa.UniqueConstraint('wallet_id', 'token_id', 'timestamp')
     )
+    op.execute("SELECT create_hypertable('profit_loss', 'timestamp')")
 
-    # Create 'wallet_token_balance' table
-    op.create_table(
-        "wallet_token_balance",
-        sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
-        sa.Column("wallet_id", sa.Integer, nullable=False),
-        sa.Column("token_id", sa.Integer, nullable=False),
-        sa.Column("balance", sa.DECIMAL(precision=30, scale=0), nullable=False),
-        sa.Column(
-            "time",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-            primary_key=True,
-            nullable=False,
-        ),
-        sa.ForeignKeyConstraint(
-            ["wallet_id"],
-            ["wallet.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["token_id"],
-            ["token.id"],
-        ),
+    op.create_table('price_data',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('token_address', sa.Text, nullable=False),
+        sa.Column('timestamp', sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column('price', sa.Numeric, nullable=False),
+        sa.UniqueConstraint('token_address', 'timestamp')
     )
-
-    # Execute the hypertable creation using TimescaleDB's function
-    op.execute("SELECT create_hypertable('wallet_token_balance', 'time');")
-
-    # Create indexes
-    op.create_index(
-        "token_id_idx",
-        "wallet_token_balance",
-        ["token_id", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-    op.create_index(
-        "wallet_id_idx",
-        "wallet_token_balance",
-        ["wallet_id", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-
-    # Create txn record table
-    op.create_table(
-        "txn_record",
-        sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
-        sa.Column("chain_id", sa.Integer, nullable=False),
-        sa.Column("hash", sa.Text, nullable=False),
-        sa.Column("block_number", sa.Integer, nullable=False),
-        sa.Column("from_address", sa.Text, nullable=False),
-        sa.Column("to_address", sa.Text, nullable=False),
-        sa.Column("token_address", sa.Text, nullable=False),
-        sa.Column("value", sa.DECIMAL(precision=30, scale=0), nullable=False),
-        sa.Column("is_copied", sa.Boolean, nullable=False),
-        sa.Column(
-            "time",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-            primary_key=True,
-            nullable=False,
-        ),
-        sa.ForeignKeyConstraint(["chain_id"], ["chain.chain_id"]),
-    )
-
-    # Convert table to a hypertable using TimescaleDB's function
-    op.execute("SELECT create_hypertable('txn_record', 'time');")
-
-    # Create indexes
-    op.create_index(
-        "hash_idx",
-        "txn_record",
-        ["hash", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-    op.create_index(
-        "block_number_idx",
-        "txn_record",
-        ["block_number", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-    op.create_index(
-        "from_address_idx",
-        "txn_record",
-        ["from_address", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-
-    # Create 'pool_stats' table
-    op.create_table(
-        "pool_stats",
-        sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
-        sa.Column("pool_dbank_id", sa.Text, nullable=False),
-        sa.Column(
-            "deposit_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False
-        ),
-        sa.Column("deposit_user_count", sa.Integer, nullable=False),
-        sa.Column("deposit_valable_user_count", sa.Integer, nullable=False),
-        sa.Column(
-            "time",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-            primary_key=True,
-            nullable=False,
-        ),
-    )
-
-    # Convert table to a hypertable using TimescaleDB's function
-    op.execute("SELECT create_hypertable('pool_stats', 'time');")
-
-    # Create index
-    op.create_index(
-        "pool_stats_idx",
-        "pool_stats",
-        ["pool_dbank_id", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
-
-    # Create 'wallet_protocol_balance' table
-    op.create_table(
-        "wallet_protocol_balance",
-        sa.Column("id", sa.Integer, autoincrement=True, nullable=False),
-        sa.Column("wallet_id", sa.Integer, nullable=False),
-        sa.Column("protocol_dbank_id", sa.Text, nullable=False),
-        sa.Column("net_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False),
-        sa.Column("asset_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False),
-        sa.Column("debt_usd_value", sa.DECIMAL(precision=20, scale=5), nullable=False),
-        sa.Column(
-            "time",
-            postgresql.TIMESTAMP(timezone=True),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
-            primary_key=True,
-            nullable=False,
-        ),
-    )
-
-    # Convert table to a hypertable using TimescaleDB's function
-    op.execute("SELECT create_hypertable('wallet_protocol_balance', 'time');")
-
-    # Create index
-    op.create_index(
-        "wallet_protocol_id_idx",
-        "wallet_protocol_balance",
-        ["wallet_id", "time"],
-        unique=False,
-        postgresql_using="btree",
-        postgresql_ops={"time": "DESC"},
-    )
+    op.execute("SELECT create_hypertable('price_data', 'timestamp')")
 
 
-def downgrade() -> None:
-    # Drop indices for 'wallet_protocol_balance' table
-    op.drop_index("wallet_protocol_id_idx", table_name="wallet_protocol_balance")
-    # Drop 'wallet_protocol_balance' table
-    op.drop_table("wallet_protocol_balance")
-
-    # Drop indices for 'pool_stats' table
-    op.drop_index("pool_stats_idx", table_name="pool_stats")
-    # Drop 'pool_stats' table
-    op.drop_table("pool_stats")
-
-    # Drop indices for 'txn_record' table
-    op.drop_index("hash_idx", table_name="txn_record")
-    op.drop_index("block_number_idx", table_name="txn_record")
-    op.drop_index("from_address_idx", table_name="txn_record")
-    # Drop 'txn_record' table
-    op.drop_table("txn_record")
-
-    # Drop indices for 'wallet_token_balance' table
-    op.drop_index("token_id_idx", table_name="wallet_token_balance")
-    op.drop_index("wallet_id_idx", table_name="wallet_token_balance")
-    # Drop 'wallet_token_balance' table
-    op.drop_table("wallet_token_balance")
-
-    # Drop 'pool_contract' table
-    op.drop_table("pool_contract")
-
-    # Drop 'pool' table
-    op.drop_table("pool")
-
-    # Drop 'protocol' table
-    op.drop_table("protocol")
-
-    # Drop 'wallet' table
-    op.drop_table("wallet")
-
-    # Drop 'token' table
-    op.drop_table("token")
-
-    # Drop 'chain' table
-    op.drop_table("chain")
+def downgrade():
+    op.drop_table('price_data')
+    op.drop_table('profit_loss')
+    op.drop_table('transaction')
+    op.drop_table('wallet_token_balance')
+    op.drop_table('ownership_history')
+    op.drop_table('token')
+    op.drop_table('wallet')
+    op.execute("DROP EXTENSION IF EXISTS timescaleDB")
